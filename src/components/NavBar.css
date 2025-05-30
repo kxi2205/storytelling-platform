@@ -1,0 +1,168 @@
+/* Navigation Bar */
+.nav-bar {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  bottom: 10px;
+  height: calc(100vh - 40px);
+  width: 60px;
+  background: var(--nav-bg, rgba(5, 176, 132, 0.6)); /* Theme-based background */
+  backdrop-filter: blur(10px); /* Frosted Glass Effect */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 50px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 3px solid var(--nav-border, navy); /* Theme-based border */
+  padding-top: 15px;
+  transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
+  z-index: 1000;
+  position: relative; /* Ensure absolute children are positioned correctly */
+}
+
+/* Expanded Navigation Bar */
+.nav-bar.expanded {
+  width: 350px;
+  align-items: flex-start;
+  padding-left: 20px;
+}
+
+/* Vertical Line to the right of the icons */
+.nav-bar.expanded::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 70px;
+  height: 93%;
+  width: 2px;
+  background-color: var(--nav-border, #BADFCD); /* Theme-based line color */
+  margin-top: 15px;
+}
+
+/* Navigation Icons */
+.nav-icon {
+  color: var(--nav-icon, navy);
+  font-size: 24px;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.3s ease-in-out;
+}
+
+.nav-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Palette Icon - Always Visible */
+.palette-icon {
+  color: var(--nav-icon, navy);
+}
+
+/* Theme Options Panel */
+.theme-options {
+  position: absolute;
+  top: 70px; /* Adjust position relative to the icons */
+  left: 80px; /* Position it next to the toggle */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 220px;
+  background: var(--nav-option-bg, rgba(255, 255, 255, 0.95));
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  padding: 16px 0 12px 0;
+  z-index: 100;
+}
+
+/* Theme Toggle Panel (inside theme panel) */
+.theme-toggle-panel {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 6px;
+  background: transparent;
+  transition: background 0.2s;
+  font-size: 16px;
+  color: var(--nav-icon, navy);
+  margin-bottom: 6px;
+}
+
+.theme-toggle-panel:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.theme-icon {
+  font-size: 20px;
+  color: var(--nav-icon, navy);
+  transition: color 0.3s ease-in-out;
+}
+
+/* Individual Theme Option */
+.theme-option {
+  padding: 8px 12px;
+  background-color: var(--nav-option-bg, rgba(255, 255, 255, 0.8));
+  color: var(--nav-option-text, navy);
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.theme-option:hover {
+  background-color: var(--cta-bg, rgba(255, 255, 255, 1));
+  transform: scale(1.05);
+}
+
+/* Reuse the theme-options container for profile section */
+.profile-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+}
+
+/* Profile Picture */
+.profile-pic {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--nav-border, navy);
+  margin-bottom: 10px;
+}
+
+/* Profile Details */
+.profile-details {
+  color: var(--nav-option-text, navy);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.profile-details strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+
+/* Logout Button */
+.logout-btn {
+  padding: 8px 12px;
+  background-color: var(--nav-option-bg, rgba(255, 255, 255, 0.8));
+  color: var(--cta-text, navy);
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.logout-btn:hover {
+  background-color: var(--cta-bg, rgba(255, 255, 255, 1));
+  transform: scale(1.05);
+}
