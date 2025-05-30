@@ -10,6 +10,9 @@ app.use(cors());
 const authRoutes = require("./routes/auth");
 app.use("/auth", authRoutes);
 
+const storiesRouter = require("./routes/stories"); // Import stories router
+app.use("/api/stories", storiesRouter); // Mount stories router
+
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
