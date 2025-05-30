@@ -112,7 +112,7 @@ const themes = {
         "--cta-bg": "#0a0b10",
         "--cta-text": "#ffd3a2",
         "--border-color": "#f21c1e",
-        "--nav-bg": "rgba(10, 11, 16, 0.6)",
+        "--nav-bg": "rgba(12, 19, 51, 0.6)",
         "--nav-border": "#344265",
         "--nav-icon": "#70abbb",
         "--nav-option-bg": "rgba(52, 66, 101, 0.8)",
