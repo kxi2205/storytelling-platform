@@ -1,23 +1,21 @@
 /* Navigation Bar */
 .nav-bar {
   position: fixed;
+  top: 15px;
+  bottom: 15px;
   right: 10px;
-  top: 10px;
-  bottom: 10px;
-  height: calc(100vh - 40px);
   width: 60px;
-  background: var(--nav-bg, rgba(5, 176, 132, 0.6)); /* Theme-based background */
-  backdrop-filter: blur(10px); /* Frosted Glass Effect */
+  background: var(--nav-bg, rgba(5, 176, 132, 0.6));
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
   align-items: center;
   border-radius: 50px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  border: 3px solid var(--nav-border, navy); /* Theme-based border */
+  border: 3px solid var(--nav-border, navy);
   padding-top: 15px;
   transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
   z-index: 1000;
-  position: relative; /* Ensure absolute children are positioned correctly */
 }
 
 /* Expanded Navigation Bar */
