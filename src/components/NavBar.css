@@ -75,7 +75,7 @@
 }
 
 /* Theme Toggle Panel (inside theme panel) */
-.theme-toggle-panel {
+.theme-panel-content .theme-toggle-panel { /* Made selector more specific */
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -88,7 +88,7 @@
   margin-bottom: 6px;
 }
 
-.theme-toggle-panel:hover {
+.theme-panel-content .theme-toggle-panel:hover { /* Made selector more specific */
   background: rgba(0,0,0,0.05);
 }
 
@@ -139,6 +139,10 @@
   font-size: 14px;
   text-align: center;
   margin-bottom: 12px;
+  width: 100%; /* Ensure it takes available width for text wrapping */
+  padding: 0 10px; /* Add some padding if text is very long */
+  box-sizing: border-box; /* Include padding in width calculation */
+  word-break: break-word; /* Allow long strings without spaces to wrap */
 }
 
 .profile-details strong {
