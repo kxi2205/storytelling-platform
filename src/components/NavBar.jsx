@@ -123,7 +123,7 @@ const NavBar = ({ theme, toggleTheme }) => {
 
       {/* Expanded Theme Panel (only accessible when expanded) */}
       {expandedSection === "theme" && (
-        <div className="theme-options">
+        <div className="theme-options theme-panel-content"> {/* Added theme-panel-content class */}
           {/* Sun/Moon toggle at the top of the theme panel */}
           <div className="theme-toggle-panel" onClick={(e) => { e.stopPropagation(); toggleTheme(); }}>
             {theme === "light" ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}

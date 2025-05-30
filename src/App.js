@@ -5,6 +5,8 @@ import { AuthProvider, AuthContext } from "./AuthContext";
 import HomePage from "./components/HomePage";
 import LoginPage from "./components/LoginPage";
 import Dashboard from "./components/Dashboard";
+import CreateStoryPage from "./components/CreateStoryPage";
+import StoryEditorPage from "./components/StoryEditorPage"; // Import StoryEditorPage
 import themes from "./themes";
 import "./App.css";
 
@@ -72,6 +74,8 @@ const App = () => {
                 }
               />
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/create-story" element={<CreateStoryPage />} />
+              <Route path="/story/:storyId/edit" element={<StoryEditorPage />} /> {/* Add StoryEditorPage route */}
             </Routes>            
             )}
           </AuthContext.Consumer>

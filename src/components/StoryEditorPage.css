@@ -1,0 +1,85 @@
+.story-editor-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+.story-editor-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.story-editor-container p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 0.9em;
+  color: #555;
+}
+
+.editor-area {
+  margin-bottom: 1.5rem;
+}
+
+.story-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+  background-color: #fff;
+  color: #333;
+}
+
+.editor-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.action-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.action-button:hover {
+  background-color: #0056b3;
+}
+
+/* Minimal theme adjustments - assuming variables are set on :root */
+.story-editor-container {
+  background-color: var(--bg-color, #f9f9f9);
+  color: var(--text-color, #333);
+  border-color: var(--border-color, #ddd);
+}
+
+.story-editor-container h2,
+.story-editor-container p {
+  color: var(--text-color, #333);
+}
+
+.story-textarea {
+  background-color: var(--input-bg-color, #fff);
+  color: var(--input-text-color, #333);
+  border-color: var(--border-color, #ccc);
+}
+
+.action-button {
+  background-color: var(--primary-color, #007bff);
+}
+.action-button:hover {
+  background-color: var(--primary-hover-color, #0056b3);
+}

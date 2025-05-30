@@ -10,6 +10,7 @@ const SignupPage = ({ closeModal, openLogin, setIsSignedUp }) => {
     username: "",
     password: "",
     confirmPassword: "",
+    role: "Writer", // Default role
   });
   const [error, setError] = useState("");
 
@@ -39,6 +40,7 @@ const SignupPage = ({ closeModal, openLogin, setIsSignedUp }) => {
       name: formData.name,
       username: formData.username,
       password: formData.password,
+      role: formData.role,
     };
 
     try {
@@ -108,6 +110,15 @@ const SignupPage = ({ closeModal, openLogin, setIsSignedUp }) => {
             onChange={handleChange}
             required
           />
+          <select
+            name="role"
+            className="modal-input"
+            value={formData.role}
+            onChange={handleChange}
+          >
+            <option value="Writer">Writer</option>
+            <option value="Reader">Reader</option>
+          </select>
           <input
             type="password"
             name="confirmPassword"

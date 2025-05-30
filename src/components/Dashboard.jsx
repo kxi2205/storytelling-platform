@@ -11,6 +11,9 @@ const Dashboard = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(
     localStorage.getItem("isAuthenticated") === "true"
   );
+  const [userStories, setUserStories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -18,6 +21,48 @@ const Dashboard = () => {
     document.body.className = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
+
+  useEffect(() => {
+    const fetchUserStories = async () => {
+      setIsLoading(true);
+      setError('');
+      const token = localStorage.getItem('token');
+
+      if (!token) {
+        setError('Authentication token not found. Please log in.');
+        setIsLoading(false);
+        // navigate('/login'); // Optionally redirect to login
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:5000/api/stories/mystories', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Failed to fetch stories. Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setUserStories(data);
+      } catch (err) {
+        console.error('Error fetching user stories:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isAuthenticated) {
+      fetchUserStories();
+    }
+  }, [isAuthenticated, navigate]);
 
   const toggleTheme = () => {
     setTheme(theme === "light" ? "dark" : "light");
@@ -73,19 +118,63 @@ const Dashboard = () => {
         )}
       </div>
 
-      <div className="story-carousel-container">
-        <h2>Newest Stories</h2>
-        <Carousel additionalTransfrom={0} infinite arrows itemClass="carousel-item" responsive={{
-          desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3 },
-          tablet: { breakpoint: { max: 1024, min: 464 }, items: 2 },
-          mobile: { breakpoint: { max: 464, min: 0 }, items: 1 }
-        }}>
-          <div className="placeholder-slide">Coming Soon</div>
-          <div className="placeholder-slide">Coming Soon</div>
-          <div className="placeholder-slide">Coming Soon</div>
-        </Carousel>
+      {/* Add Create New Story Button */}
+      <div style={{ textAlign: 'center', margin: '2rem 0' }}>
+        <button className="cta-button" onClick={() => navigate("/create-story")}>
+          Create New Story
+        </button>
       </div>
 
+      <div className="story-carousel-container">
+        <h2>My Stories</h2>
+        {isLoading && <p>Loading your stories...</p>}
+        {error && <p className="error-message" style={{ backgroundColor: '#ffebee', color: 'red', border: '1px solid red', padding: '10px', borderRadius: '4px' }}>Error: {error}</p>}
+        {!isLoading && !error && userStories.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '2rem', color: '#777' }}>
+            <p>You haven't created any stories yet.</p>
+            <p>Click the "Create New Story" button above to start your first adventure!</p>
+          </div>
+        )}
+        {!isLoading && !error && userStories.length > 0 && (
+          <Carousel
+            additionalTransfrom={0}
+            arrows
+            infinite={userStories.length > 2} // Only infinite if enough items
+            itemClass="carousel-item"
+            responsive={{
+              desktop: { breakpoint: { max: 3000, min: 1024 }, items: 3, partialVisibilityGutter: 40 },
+              tablet: { breakpoint: { max: 1024, min: 464 }, items: 2, partialVisibilityGutter: 30 },
+              mobile: { breakpoint: { max: 464, min: 0 }, items: 1, partialVisibilityGutter: 20 }
+            }}
+          >
+            {userStories.map((story) => (
+              <div 
+                className="story-slide" 
+                key={story._id} 
+                style={{ padding: '10px', cursor: 'pointer' }} 
+                onClick={() => navigate(`/story/${story._id}/edit`)}
+              >
+                <div style={{ border: '1px solid #ddd', borderRadius: '8px', padding: '15px', backgroundColor: 'var(--card-bg-color)', height: '100%' }}>
+                  <h3 style={{ color: 'var(--text-color)' }}>{story.title}</h3>
+                  <p style={{ color: 'var(--text-color-secondary)', fontSize: '0.9em' }}>
+                    {story.description ? (story.description.length > 100 ? story.description.substring(0, 97) + '...' : story.description) : 'No description available.'}
+                  </p>
+                  <p style={{ fontSize: '0.8em', color: '#888' }}>Genre: {story.genre || 'N/A'}</p>
+                  <small style={{ color: '#aaa' }}>Last updated: {new Date(story.updatedAt).toLocaleDateString()}</small>
+                  <button 
+                    onClick={(e) => { e.stopPropagation(); navigate(`/story/${story._id}/edit`); }} 
+                    style={{ marginTop: '10px', padding: '5px 10px', backgroundColor: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  >
+                    Edit Story
+                  </button>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        )}
+      </div>
+
+      {/* Keeping other carousels as placeholders for now */}
       <div className="story-carousel-container">
         <h2>Most Popular Stories</h2>
         <Carousel
