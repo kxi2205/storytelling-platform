@@ -1,9 +1,9 @@
 /* Navigation Bar */
 .nav-bar {
   position: fixed;
-  top: 15px;
-  bottom: 15px;
+  top: 50%;
   right: 10px;
+  transform: translateY(-50%);
   width: 60px;
   background: var(--nav-bg, rgba(5, 176, 132, 0.6));
   backdrop-filter: blur(10px);
@@ -13,7 +13,8 @@
   border-radius: 50px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   border: 3px solid var(--nav-border, navy);
-  padding-top: 15px;
+  padding: 15px 0;
+  height: auto;
   transition: width 0.3s ease-in-out, padding-left 0.3s ease-in-out;
   z-index: 1000;
 }
@@ -60,22 +61,22 @@
 .theme-options {
   position: absolute;
   top: 70px; /* Adjust position relative to the icons */
-  left: 80px; /* Position it next to the toggle */
+  left: 100px; /* Position it next to the toggle */
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 220px;
+  width: 240px;
   background: var(--nav-option-bg, rgba(255, 255, 255, 0.95));
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0,0,0,0.10);
   padding: 16px 0 12px 0;
   z-index: 100;
+  text-align: center;
 }
 
 /* Theme Toggle Panel (inside theme panel) */
 .theme-panel-content .theme-toggle-panel { /* Made selector more specific */
   display: flex;
-  align-items: center;
   cursor: pointer;
   padding: 8px 16px;
   border-radius: 6px;
@@ -106,6 +107,9 @@
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  left: 240px;
+  width: 180px;
+  margin-left: 15px;
 }
 
 .theme-option:hover {
