@@ -126,12 +126,26 @@ const NavBar = ({ theme, toggleTheme }) => {
         <div className="theme-options theme-panel-content"> {/* Added theme-panel-content class */}
           {/* Sun/Moon toggle at the top of the theme panel */}
           <div className="theme-toggle-panel" onClick={(e) => { e.stopPropagation(); toggleTheme(); }}>
-            {theme === "light" ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
-            <span style={{ marginLeft: 8 }}>
-              {theme === "light" ? "Switch to Dark" : "Switch to Light"}
-            </span>
-          </div>
-          <hr />
+  {theme === "light" ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
+  <span style={{ marginLeft: 8 }}>
+    {theme === "light" ? "Switch to Dark" : "Switch to Light"}
+  </span>
+</div>
+
+<hr className="theme-divider" />
+
+<div className="theme-scroll-container">
+  {filteredThemes.map((themeName) => (
+    <div
+      key={themeName}
+      className="theme-option"
+      onClick={() => applyTheme(themeName)}
+    >
+      {themeName.replace(/([A-Z])/g, " $1").trim()}
+    </div>
+  ))}
+</div>
+
           {filteredThemes.map((themeName) => (
             <div
               key={themeName}
@@ -146,32 +160,64 @@ const NavBar = ({ theme, toggleTheme }) => {
 
       {/* Expanded Profile Panel (only if logged in) */}
       {expandedSection === "profile" && isLoggedIn && (
-        <div className="theme-options profile-options">
-          <img
-            src={userData?.profilePic || "https://i.imgur.com/6VBx3io.png"}
-            alt="Profile"
-            className="profile-pic"
-          />
-          <div className="profile-details">
-            {tokenExpired ? (
-              <>
-                <strong>Session expired</strong>
-                <span>Please login again</span>
-              </>
-            ) : userData ? (
-              <>
-                <strong>{userData.name}</strong>
-                <span>@{userData.username}</span>
-              </>
-            ) : (
-              <strong>Loading profile...</strong>
-            )}
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <FaSignOutAlt /> Logout
-          </button>
-        </div>
+  <div className="theme-options profile-options">
+    <div className="profile-pic-wrapper">
+      <img
+        src={userData?.profilePic || "https://i.imgur.com/6VBx3io.png"}
+        alt="Profile"
+        className="profile-pic"
+        onClick={() => document.getElementById("uploadProfilePic").click()}
+      />
+      <div
+        className="profile-pic-overlay"
+        onClick={() => document.getElementById("uploadProfilePic").click()}
+      >
+        Change
+      </div>
+      <input
+        type="file"
+        id="uploadProfilePic"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setUserData((prev) => ({
+                ...prev,
+                profilePic: reader.result,
+              }));
+              // TODO: POST reader.result to backend
+            };
+            reader.readAsDataURL(file);
+          }
+        }}
+      />
+    </div>
+
+    <div className="profile-details">
+      {tokenExpired ? (
+        <>
+          <strong>Session expired</strong>
+          <span>Please login again</span>
+        </>
+      ) : userData ? (
+        <>
+          <strong>{userData.name}</strong>
+          <span>@{userData.username}</span>
+        </>
+      ) : (
+        <strong>Loading profile...</strong>
       )}
+    </div>
+
+    <button className="logout-btn" onClick={handleLogout}>
+      <FaSignOutAlt /> Logout
+    </button>
+  </div>
+)}
+
     </div>
   );
 };
