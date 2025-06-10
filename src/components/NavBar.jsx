@@ -163,7 +163,11 @@ const NavBar = ({ theme, toggleTheme }) => {
   <div className="theme-options profile-options">
     <div className="profile-pic-wrapper">
       <img
-        src={userData?.profilePic || "https://i.imgur.com/6VBx3io.png"}
+        src={
+          userData?.profilePic && userData.profilePic.startsWith('/')
+            ? `http://localhost:5000${userData.profilePic}`
+            : userData?.profilePic || "https://i.imgur.com/6VBx3io.png"
+        }
         alt="Profile"
         className="profile-pic"
         onClick={() => document.getElementById("uploadProfilePic").click()}
