@@ -36,20 +36,19 @@ const SignupPage = ({ closeModal, openLogin, setIsSignedUp }) => {
       return;
     }
 
-    const userData = {
-      name: formData.name,
-      username: formData.username,
-      password: formData.password,
-      role: formData.role,
-    };
+    const formDataToSend = new FormData();
+    formDataToSend.append('name', formData.name);
+    formDataToSend.append('username', formData.username);
+    formDataToSend.append('password', formData.password);
+    formDataToSend.append('role', formData.role);
+    if (formData.profilePic) {
+      formDataToSend.append('profilePic', formData.profilePic);
+    }
 
     try {
       const response = await fetch("http://localhost:5000/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
+        body: formDataToSend,
       });
 
       const data = await response.json();
