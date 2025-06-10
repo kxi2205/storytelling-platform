@@ -11,46 +11,78 @@ const router = express.Router();
 // Multer storage configuration
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    console.log(`[${new Date().toISOString()}] Multer destination: public/uploads/profile_pics/ for file ${file.originalname}`);
     cb(null, "public/uploads/profile_pics/");
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname)); // Appending extension
+    const newFilename = Date.now() + path.extname(file.originalname);
+    console.log(`[${new Date().toISOString()}] Multer filename: ${newFilename} for original file ${file.originalname}`);
+    cb(null, newFilename);
   },
 });
 
 const upload = multer({
   storage: storage,
   limits: { fileSize: 1024 * 1024 * 5 }, // 5MB file size limit
+  // Adding error handling for multer directly
+  // Note: This is a general way, specific error checks can be added in the route handler too.
 });
 
 // User Signup
-router.post("/signup", upload.single("profilePic"), async (req, res) => {
-  const { name, username, password, role } = req.body;
-  let profilePicPath;
+router.post("/signup", (req, res, next) => {
+    console.log(`[${new Date().toISOString()}] Received POST request for /signup`);
+    console.log("Request headers:", JSON.stringify(req.headers, null, 2));
+    // Log body before multer only if not multipart, otherwise multer consumes it
+    if (req.headers['content-type'] && !req.headers['content-type'].includes('multipart/form-data')) {
+        console.log("Request body (pre-multer):", JSON.stringify(req.body, null, 2));
+    }
+    next();
+}, upload.single("profilePic"), async (req, res) => {
+    console.log(`[${new Date().toISOString()}] Post-multer processing for /signup`);
+    // Log body after multer has processed it
+    console.log("Request body (post-multer):", JSON.stringify(req.body, null, 2));
 
-  if (req.file) {
-    profilePicPath = `/uploads/profile_pics/${req.file.filename}`;
-  }
+    if (req.file) {
+        console.log("File uploaded:", JSON.stringify(req.file, null, 2));
+    } else {
+        console.log("No file uploaded.");
+    }
 
-  try {
-    const existingUser = await User.findOne({ username });
-    if (existingUser) return res.status(400).json({ error: "Username already taken" });
+    const { name, username, password, role } = req.body;
+    let profilePicPath;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({
-      name,
-      username,
-      password: hashedPassword,
-      role: role || "Writer",
-      profilePic: profilePicPath,
-    });
-    await user.save();
+    if (req.file) {
+        profilePicPath = `/uploads/profile_pics/${req.file.filename}`;
+    }
 
-    res.status(201).json({ message: "User registered successfully!" });
-  } catch (error) {
-    console.error("Signup Error:", error);
-    res.status(500).json({ error: "Server error" });
-  }
+    try {
+        console.log("Attempting to find existing user:", username);
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            console.log("User already exists:", username);
+            return res.status(400).json({ error: "Username already taken" });
+        }
+
+        console.log("Attempting to hash password for user:", username);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const userToCreate = {
+            name,
+            username,
+            password: hashedPassword,
+            role: role || "Writer",
+            profilePic: profilePicPath,
+        };
+        console.log("Attempting to save new user:", JSON.stringify(userToCreate, null, 2));
+        const user = new User(userToCreate);
+        await user.save();
+        console.log("User saved successfully:", username);
+
+        res.status(201).json({ message: "User registered successfully!" });
+    } catch (error) {
+        console.error("Signup Error in catch block:", error);
+        res.status(500).json({ error: "Server error from catch block" });
+    }
 });
 
 // User Login
@@ -83,4 +115,4 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router;
