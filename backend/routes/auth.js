@@ -29,7 +29,7 @@ router.post("/signup", upload.single("profilePic"), async (req, res) => {
   let profilePicPath;
 
   if (req.file) {
-    profilePicPath = \`/uploads/profile_pics/${req.file.filename}\`;
+    profilePicPath = `/uploads/profile_pics/${req.file.filename}`;
   }
 
   try {
@@ -83,4 +83,4 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router
