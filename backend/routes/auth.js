@@ -37,7 +37,26 @@ router.post("/signup", (req, res, next) => {
         console.log("Request body (pre-multer):", JSON.stringify(req.body, null, 2));
     }
     next();
-}, upload.single("profilePic"), async (req, res) => {
+},
+(req, res, next) => { // New Multer error handling middleware
+    const multerUpload = upload.single("profilePic");
+    multerUpload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            // A Multer error occurred when uploading.
+            console.error("MulterError during profile pic upload:", err);
+            // You could customize the response, but for now, just pass the error
+            return res.status(500).json({ error: "File upload error: " + err.message });
+        } else if (err) {
+            // An unknown error occurred when uploading.
+            console.error("Unknown error during profile pic upload:", err);
+            return res.status(500).json({ error: "File upload error: " + err.message });
+        }
+        // Everything went fine with multer, proceed to the next handler
+        console.log(`[${new Date().toISOString()}] Multer processing complete for /signup. File: ${req.file ? req.file.filename : 'No file uploaded'}`);
+        next();
+    });
+},
+async (req, res) => {
     console.log(`[${new Date().toISOString()}] Post-multer processing for /signup`);
     // Log body after multer has processed it
     console.log("Request body (post-multer):", JSON.stringify(req.body, null, 2));

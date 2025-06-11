@@ -3,8 +3,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path"); // Require the 'path' module
+const fs = require("fs"); // Import the 'fs' module
 
 const app = express();
+
+// Define the profile pictures directory path
+const profilePicsDir = path.join(__dirname, 'public', 'uploads', 'profile_pics');
 
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
@@ -28,6 +32,14 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
+
+// Ensure the profile pictures directory exists
+if (!fs.existsSync(profilePicsDir)) {
+  fs.mkdirSync(profilePicsDir, { recursive: true });
+  console.log(`✅ Created directory: ${profilePicsDir}`);
+} else {
+  console.log(`✅ Directory already exists: ${profilePicsDir}`);
+}
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
