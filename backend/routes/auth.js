@@ -134,4 +134,36 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+// Update Profile Picture
+router.put("/profile/picture", authMiddleware, upload.single("profilePic"), async (req, res) => {
+	if (!req.file) {
+		return res.status(400).json({ error: "No file uploaded." });
+	}
+
+	try {
+		const user = await User.findById(req.user.id);
+		if (!user) {
+			return res.status(404).json({ error: "User not found." });
+		}
+
+		// Delete old profile picture if it exists
+		if (user.profilePic) {
+			const fs = require("fs");
+			const path = require("path"); // Ensure path is required if not already
+			const oldPicPath = path.join(__dirname, "..", "public", user.profilePic); // Adjusted path
+			if (fs.existsSync(oldPicPath)) {
+				fs.unlinkSync(oldPicPath);
+			}
+		}
+
+		user.profilePic = `/uploads/profile_pics/${req.file.filename}`;
+		await user.save();
+
+		res.json({ message: "Profile picture updated successfully.", user });
+	} catch (error) {
+		console.error("Error updating profile picture:", error);
+		res.status(500).json({ error: "Server error while updating profile picture." });
+	}
+});
+
 module.exports = router;
