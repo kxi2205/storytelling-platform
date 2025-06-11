@@ -63,7 +63,7 @@ const NavBar = ({ theme, toggleTheme }) => {
       if (!token) return;
 
       try {
-        const response = await fetch("http://localhost:5000/auth/profile", {
+        const response = await fetch("http://localhost:5000/api/auth/profile", { // Changed URL
           headers: {
             Authorization: token,
           },
@@ -74,7 +74,7 @@ const NavBar = ({ theme, toggleTheme }) => {
           setUserData(data);
         } else {
           console.error("Failed to fetch user:", data.error);
-          if (data.error === "Invalid token.") {
+          if (data.error === "Invalid token." || response.status === 401) { // Added status check
             setTokenExpired(true);
             setIsLoggedIn(false);
             localStorage.removeItem("token");
@@ -93,7 +93,48 @@ const NavBar = ({ theme, toggleTheme }) => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    window.location.href = "/homepage";
+    setUserData(null); // Clear user data on logout
+    window.location.href = "/homepage"; // Consider using React Router for navigation
+  };
+
+  const handleProfilePicChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('profilePic', file);
+
+    const token = localStorage.getItem("token");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/profile/picture", {
+        method: 'PUT',
+        headers: {
+          Authorization: token,
+          // 'Content-Type': 'multipart/form-data' is not needed, fetch sets it automatically with FormData
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          profilePic: data.user.profilePic, // Assuming backend returns { user: { profilePic: '...' } }
+        }));
+      } else {
+        console.error("Failed to update profile picture:", data.error || response.statusText);
+        // Optionally, handle specific errors like token expiration
+        if (response.status === 401) {
+          setTokenExpired(true);
+          setIsLoggedIn(false);
+          localStorage.removeItem("token");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating profile picture:", error);
+    }
   };
 
   const filteredThemes = Object.keys(themes).filter(
@@ -183,20 +224,7 @@ const NavBar = ({ theme, toggleTheme }) => {
         id="uploadProfilePic"
         accept="image/*"
         style={{ display: "none" }}
-        onChange={(e) => {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setUserData((prev) => ({
-                ...prev,
-                profilePic: reader.result,
-              }));
-              // TODO: POST reader.result to backend
-            };
-            reader.readAsDataURL(file);
-          }
-        }}
+        onChange={handleProfilePicChange} // Use the new handler
       />
     </div>
 
