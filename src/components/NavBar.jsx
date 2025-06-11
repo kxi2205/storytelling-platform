@@ -63,41 +63,44 @@ const NavBar = ({ theme, toggleTheme }) => {
       if (!token) return;
 
       try {
-        const response = await fetch("http://localhost:5000/api/auth/profile", { // Changed URL
+        const response = await fetch("http://localhost:5000/api/auth/profile", { // 1. Corrected URL
           headers: {
             Authorization: token,
           },
         });
 
-        const data = await response.json();
         if (response.ok) {
-          setUserData(data);
+          const data = await response.json();
+          setUserData(data); // 1. Set userData with direct properties of data
         } else {
-          console.error("Failed to fetch user:", data.error);
-          if (data.error === "Invalid token." || response.status === 401) { // Added status check
-            setTokenExpired(true);
-            setIsLoggedIn(false);
-            localStorage.removeItem("token");
+          const errorData = await response.json().catch(() => ({ error: "Failed to parse error JSON" })); // Ensure errorData is always defined
+          console.error("Failed to fetch user:", errorData.error || response.statusText);
+          if (response.status === 401 || errorData.error === "Invalid token.") { // 1. Added response.status === 401 check
+            handleLogout(); // Call handleLogout for centralized logout logic
           }
         }
       } catch (err) {
         console.error("Error fetching user:", err);
+        // It might be good to logout here too if there's a network error and user expects to be logged in
       }
     };
 
     if (isLoggedIn) {
       fetchUserData();
     }
-  }, [isLoggedIn]);
+  }, [isLoggedIn]); // Added handleLogout to dependency array if it's memoized, but it's not here.
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    setUserData(null); // Clear user data on logout
-    window.location.href = "/homepage"; // Consider using React Router for navigation
+    setUserData(null); // 1. Ensure setUserData(null) is called
+    setTokenExpired(true); // Explicitly set tokenExpired
+    // window.location.href = "/homepage"; // Consider using React Router for navigation if available
+    // For immediate effect on UI and preventing further authenticated calls:
+    setExpandedSection(null);
   };
 
-  const handleProfilePicChange = async (event) => {
+  const handleProfilePicChange = async (event) => { // 2. Re-implemented handleProfilePicChange
     const file = event.target.files[0];
     if (!file) return;
 
@@ -105,35 +108,35 @@ const NavBar = ({ theme, toggleTheme }) => {
     formData.append('profilePic', file);
 
     const token = localStorage.getItem("token");
+    if (!token) {
+      handleLogout(); // Should not happen if UI is managed correctly
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:5000/api/auth/profile/picture", {
         method: 'PUT',
         headers: {
           Authorization: token,
-          // 'Content-Type': 'multipart/form-data' is not needed, fetch sets it automatically with FormData
+          // 'Content-Type': 'multipart/form-data' is set automatically by browser with FormData
         },
         body: formData,
       });
 
-      const data = await response.json();
-
       if (response.ok) {
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          profilePic: data.user.profilePic, // Assuming backend returns { user: { profilePic: '...' } }
-        }));
+        const responseData = await response.json();
+        setUserData(prev => ({ ...prev, profilePic: responseData.user.profilePic })); // Update using new path
       } else {
-        console.error("Failed to update profile picture:", data.error || response.statusText);
-        // Optionally, handle specific errors like token expiration
+        const errorData = await response.json().catch(() => ({ error: "Failed to parse error JSON" }));
+        console.error("Failed to update profile picture:", errorData.error || response.statusText);
         if (response.status === 401) {
-          setTokenExpired(true);
-          setIsLoggedIn(false);
-          localStorage.removeItem("token");
+          handleLogout(); // Token is invalid or expired
         }
+        // Optionally, revert optimistic UI update if one was made, or show specific error message
       }
     } catch (error) {
       console.error("Error updating profile picture:", error);
+      // Handle network errors or other unexpected issues
     }
   };
 
@@ -224,7 +227,7 @@ const NavBar = ({ theme, toggleTheme }) => {
         id="uploadProfilePic"
         accept="image/*"
         style={{ display: "none" }}
-        onChange={handleProfilePicChange} // Use the new handler
+        onChange={handleProfilePicChange} // 3. Connect file input
       />
     </div>
 
