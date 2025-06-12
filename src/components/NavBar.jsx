@@ -63,76 +63,59 @@ const NavBar = ({ theme, toggleTheme }) => {
       if (!token) return;
 
       try {
-    const response = await fetch("http://localhost:5000/api/auth/profile", {
-      headers: {
-        Authorization: token,
-      },
-    });
+        const response = await fetch("http://localhost:5000/auth/profile", {
+          headers: {
+            Authorization: token,
+          },
+        });
 
-    if (response.ok) {
-      const data = await response.json();
-      setUserData(data);
-    } else {
-      const errorData = await response.json().catch(() => ({ error: "Failed to parse error JSON" }));
-      console.error("Failed to fetch user:", errorData.error || response.statusText);
-      if (response.status === 401 || errorData.error === "Invalid token.") {
-        handleLogout();
+        const data = await response.json();
+        if (response.ok) {
+          setUserData(data);
+        } else {
+          console.error("Failed to fetch user:", data.error);
+          if (data.error === "Invalid token.") {
+            setTokenExpired(true);
+            setIsLoggedIn(false);
+            localStorage.removeItem("token");
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching user:", err);
       }
-    }
-  } catch (err) {
-    console.error("Error fetching user:", err);
-    // It might be good to logout here too if there's a network error and user expects to be logged in
-  }
-};
+    };
 
     if (isLoggedIn) {
       fetchUserData();
     }
-  }, [isLoggedIn]); // Added handleLogout to dependency array if it's memoized, but it's not here.
+  }, [isLoggedIn]);
 
-const handleLogout = () => {
-  localStorage.removeItem("token");
-  setIsLoggedIn(false);
-  setUserData(null); // Clear user data on logout
-  window.location.href = "/homepage"; // Consider using React Router for navigation
-};
-
-  const handleProfilePicChange = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append('profilePic', file);
-
-    const token = localStorage.getItem("token");
-
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/profile/picture", {
-        method: 'PUT',
-        headers: {
-          Authorization: token,
-        },
-        body: formData,
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setUserData((prev) => ({
-          ...prev,
-          profilePic: data.profilePic,
-        }));
-      } else {
-        console.error("Failed to update profile picture");
-      }
-    } catch (err) {
-      console.error("Error uploading profile picture:", err);
-    }
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    window.location.href = "/homepage";
   };
 
-  // Filter out the current theme from the theme list
-  const filteredThemes = Object.keys(themes).filter((t) => t !== selectedTheme);
+  const filteredThemes = Object.keys(themes).filter(
+    (themeName) => themes[themeName].mode === theme
+  );
 
   return (
-    <div className="navbar" ref={navRef}>
+    <div ref={navRef} className={`nav-bar ${expandedSection ? "expanded" : ""}`}>
+      {/* Navigation Icons */}
+      <div className="nav-icon" title="Home"><FaHome /></div>
+      <div className="nav-icon" title="Created Stories"><FaBookOpen /></div>
+      <div className="nav-icon" title="Collaboration"><FaUsers /></div>
+      <div className="nav-icon" title="Explore"><FaGlobe /></div>
+      <div className="nav-icon" title="AI Characters"><FaRobot /></div>
+
+      {/* Profile icon (only if logged in) */}
+      {isLoggedIn && (
+        <div className="nav-icon" title="Profile" onClick={() => toggleSection("profile")}>
+          <FaUser />
+        </div>
+      )}
+
       {/* Theme Palette icon (visible always) */}
       <div className="nav-icon" title="Change Theme" onClick={() => toggleSection("theme")}>
         <FaPalette />
@@ -140,79 +123,105 @@ const handleLogout = () => {
 
       {/* Expanded Theme Panel (only accessible when expanded) */}
       {expandedSection === "theme" && (
-        <div className="theme-options theme-panel-content">
+        <div className="theme-options theme-panel-content"> {/* Added theme-panel-content class */}
           {/* Sun/Moon toggle at the top of the theme panel */}
           <div className="theme-toggle-panel" onClick={(e) => { e.stopPropagation(); toggleTheme(); }}>
-            {theme === "light" ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
-            <span style={{ marginLeft: 8 }}>
-              {theme === "light" ? "Switch to Dark" : "Switch to Light"}
-            </span>
-          </div>
-          <hr className="theme-divider" />
-          <div className="theme-scroll-container">
-            {filteredThemes.map((themeName) => (
-              <div
-                key={themeName}
-                className="theme-option"
-                onClick={() => applyTheme(themeName)}
-              >
-                {themeName.replace(/([A-Z])/g, " $1").trim()}
-              </div>
-            ))}
-          </div>
+  {theme === "light" ? <FaSun className="theme-icon" /> : <FaMoon className="theme-icon" />}
+  <span style={{ marginLeft: 8 }}>
+    {theme === "light" ? "Switch to Dark" : "Switch to Light"}
+  </span>
+</div>
+
+<hr className="theme-divider" />
+
+<div className="theme-scroll-container">
+  {filteredThemes.map((themeName) => (
+    <div
+      key={themeName}
+      className="theme-option"
+      onClick={() => applyTheme(themeName)}
+    >
+      {themeName.replace(/([A-Z])/g, " $1").trim()}
+    </div>
+  ))}
+</div>
+
+          {filteredThemes.map((themeName) => (
+            <div
+              key={themeName}
+              className="theme-option"
+              onClick={() => applyTheme(themeName)}
+            >
+              {themeName.replace(/([A-Z])/g, " $1").trim()}
+            </div>
+          ))}
         </div>
       )}
 
       {/* Expanded Profile Panel (only if logged in) */}
       {expandedSection === "profile" && isLoggedIn && (
-        <div className="theme-options profile-options">
-          <div className="profile-pic-wrapper">
-            <img
-              src={
-                userData?.profilePic && userData.profilePic.startsWith('/')
-                  ? `http://localhost:5000${userData.profilePic}`
-                  : userData?.profilePic || "https://i.imgur.com/6VBx3io.png"
-              }
-              alt="Profile"
-              className="profile-pic"
-              onClick={() => document.getElementById("uploadProfilePic").click()}
-            />
-            <div
-              className="profile-pic-overlay"
-              onClick={() => document.getElementById("uploadProfilePic").click()}
-            >
-              Change
-            </div>
-            <input
-              type="file"
-              id="uploadProfilePic"
-              accept="image/*"
-              style={{ display: "none" }}
-              onChange={handleProfilePicChange}
-            />
-          </div>
+  <div className="theme-options profile-options">
+    <div className="profile-pic-wrapper">
+      <img
+        src={
+          userData?.profilePic && userData.profilePic.startsWith('/')
+            ? `http://localhost:5000${userData.profilePic}`
+            : userData?.profilePic || "https://i.imgur.com/6VBx3io.png"
+        }
+        alt="Profile"
+        className="profile-pic"
+        onClick={() => document.getElementById("uploadProfilePic").click()}
+      />
+      <div
+        className="profile-pic-overlay"
+        onClick={() => document.getElementById("uploadProfilePic").click()}
+      >
+        Change
+      </div>
+      <input
+        type="file"
+        id="uploadProfilePic"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={(e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setUserData((prev) => ({
+                ...prev,
+                profilePic: reader.result,
+              }));
+              // TODO: POST reader.result to backend
+            };
+            reader.readAsDataURL(file);
+          }
+        }}
+      />
+    </div>
 
-          <div className="profile-details">
-            {tokenExpired ? (
-              <>
-                <strong>Session expired</strong>
-                <span>Please login again</span>
-              </>
-            ) : userData ? (
-              <>
-                <strong>{userData.name}</strong>
-                <span>@{userData.username}</span>
-              </>
-            ) : (
-              <strong>Loading profile...</strong>
-            )}
-          </div>
-
-          <button className="logout-btn" onClick={handleLogout}>
-            <FaSignOutAlt /> Logout
-          </button>
-        </div>
+    <div className="profile-details">
+      {tokenExpired ? (
+        <>
+          <strong>Session expired</strong>
+          <span>Please login again</span>
+        </>
+      ) : userData ? (
+        <>
+          <strong>{userData.name}</strong>
+          <span>@{userData.username}</span>
+        </>
+      ) : (
+        <strong>Loading profile...</strong>
       )}
+    </div>
+
+    <button className="logout-btn" onClick={handleLogout}>
+      <FaSignOutAlt /> Logout
+    </button>
+  </div>
+)}
+
     </div>
   );
 };
