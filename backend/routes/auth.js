@@ -128,9 +128,13 @@ router.get("/profile", authMiddleware, async (req, res) => {
   try {
     console.log("📥 User ID from token:", req.user.id); // Debug
     const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ error: "User profile not found." });
+    }
     res.json(user);
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    console.error("Error fetching profile:", error);
+    res.status(500).json({ error: "Server error while fetching profile." });
   }
 });
 
