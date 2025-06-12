@@ -3,10 +3,12 @@ import {
   FaHome, FaBookOpen, FaUsers, FaGlobe, FaRobot,
   FaUser, FaPalette, FaSun, FaMoon, FaSignOutAlt
 } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 import themes from "../themes";
 import "./NavBar.css";
 
 const NavBar = ({ theme, toggleTheme }) => {
+  const navigate = useNavigate();
   const [expandedSection, setExpandedSection] = useState(null); // "theme" | "profile" | null
   const [selectedTheme, setSelectedTheme] = useState(localStorage.getItem("selectedTheme") || "light");
   const [userData, setUserData] = useState(null);
@@ -107,6 +109,14 @@ const NavBar = ({ theme, toggleTheme }) => {
     window.location.href = "/homepage";
   };
 
+  const handleHomeClick = () => {
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    } else {
+      navigate('/homepage');
+    }
+  };
+
   const filteredThemes = Object.keys(themes).filter(
     (themeName) => themes[themeName].mode === theme
   );
@@ -114,7 +124,7 @@ const NavBar = ({ theme, toggleTheme }) => {
   return (
     <div ref={navRef} className={`nav-bar ${expandedSection ? "expanded" : ""}`}>
       {/* Navigation Icons */}
-      <div className="nav-icon" title="Home"><FaHome /></div>
+      <div className="nav-icon" title="Home" onClick={handleHomeClick}><FaHome /></div>
       <div className="nav-icon" title="Created Stories"><FaBookOpen /></div>
       <div className="nav-icon" title="Collaboration"><FaUsers /></div>
       <div className="nav-icon" title="Explore"><FaGlobe /></div>
