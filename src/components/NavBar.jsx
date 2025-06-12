@@ -194,18 +194,51 @@ const NavBar = ({ theme, toggleTheme }) => {
         id="uploadProfilePic"
         accept="image/*"
         style={{ display: "none" }}
-        onChange={(e) => {
+        onChange={async (e) => {
           const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setUserData((prev) => ({
-                ...prev,
-                profilePic: reader.result,
-              }));
-              // TODO: POST reader.result to backend
-            };
-            reader.readAsDataURL(file);
+          if (!file) return;
+
+          const token = localStorage.getItem("token");
+          if (!token) {
+            console.error("No token found. Cannot upload profile picture.");
+            // Optionally, inform the user they need to be logged in
+            return;
+          }
+
+          const formData = new FormData();
+          formData.append("profilePic", file);
+
+          try {
+            const response = await fetch("http://localhost:5000/api/auth/profile/picture", {
+              method: "PUT",
+              headers: {
+                Authorization: token,
+              },
+              body: formData,
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+              if (responseData.user && responseData.user.profilePic) {
+                setUserData(prev => ({
+                  ...prev,
+                  profilePic: responseData.user.profilePic,
+                }));
+              } else if (responseData.profilePic) { // Fallback if only profilePic is sent
+                setUserData(prev => ({
+                  ...prev,
+                  profilePic: responseData.profilePic,
+                }));
+              }
+              // Optionally, display a success message
+            } else {
+              console.error("Profile picture update failed:", responseData.error);
+              // Optionally, display an error message to the user
+            }
+          } catch (error) {
+            console.error("Error uploading profile picture:", error);
+            // Optionally, display an error message
           }
         }}
       />
