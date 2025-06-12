@@ -31,66 +31,77 @@ const NavBar = ({ theme, toggleTheme }) => {
 
   useEffect(() => {
     applyTheme(selectedTheme);
+  }, [selectedTheme]);
+
+  useEffect(() => {
+    console.log("NavBar main effect: Running on component mount/update.");
+
+    const fetchUserData = async (currentToken) => {
+      console.log("NavBar main effect: fetchUserData called with token:", currentToken);
+      if (!currentToken) {
+        console.log("NavBar main effect: fetchUserData exiting, no token.");
+        return;
+      }
+
+      try {
+        const response = await fetch("http://localhost:5000/api/auth/profile", {
+          headers: {
+            Authorization: currentToken,
+          },
+        });
+        console.log("NavBar main effect: fetchUserData - response status:", response.status);
+        const data = await response.json();
+        console.log("Fetched user data from backend:", data); // Existing log
+        if (response.ok) {
+          console.log("NavBar main effect: fetchUserData - response OK, setting userData.");
+          setUserData(data);
+        } else {
+          console.error("NavBar main effect: fetchUserData - Failed to fetch user:", data.error);
+          if (data.error === "Invalid token.") {
+            setTokenExpired(true);
+            setIsLoggedIn(false);
+            localStorage.removeItem("token");
+            console.log("NavBar main effect: fetchUserData - Invalid token, logged out.");
+          }
+        }
+      } catch (err) {
+        console.error("NavBar main effect: fetchUserData - Error fetching user:", err);
+      }
+    };
 
     const token = localStorage.getItem("token");
+    console.log("NavBar main effect: Token from localStorage:", token);
+
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const expiry = payload.exp * 1000;
+        console.log("NavBar main effect: Token payload:", payload, "Expiry:", new Date(expiry));
+
         if (Date.now() >= expiry) {
-          console.warn("Token expired.");
+          console.warn("NavBar main effect: Token expired.");
           setTokenExpired(true);
           setIsLoggedIn(false);
           localStorage.removeItem("token");
         } else {
+          console.log("NavBar main effect: Token valid, setting isLoggedIn to true.");
           setIsLoggedIn(true);
+          fetchUserData(token); // Call fetchUserData if token is valid
         }
       } catch (err) {
-        console.error("Token parsing error:", err);
+        console.error("NavBar main effect: Token parsing error:", err);
         setTokenExpired(true);
         setIsLoggedIn(false);
         localStorage.removeItem("token");
       }
     } else {
+      console.log("NavBar main effect: No token found, setting isLoggedIn to false.");
       setIsLoggedIn(false);
     }
-    // eslint-disable-next-line
-  }, [selectedTheme]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) return;
-
-      try {
-        const response = await fetch("http://localhost:5000/auth/profile", {
-          headers: {
-            Authorization: token,
-          },
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setUserData(data);
-        } else {
-          console.error("Failed to fetch user:", data.error);
-          if (data.error === "Invalid token.") {
-            setTokenExpired(true);
-            setIsLoggedIn(false);
-            localStorage.removeItem("token");
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching user:", err);
-      }
-    };
-
-    if (isLoggedIn) {
-      fetchUserData();
-    }
-  }, [isLoggedIn]);
+  }, []);
 
   const handleLogout = () => {
+    setUserData(null);
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     window.location.href = "/homepage";
