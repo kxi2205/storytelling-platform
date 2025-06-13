@@ -60,7 +60,7 @@
 /* Theme Options Panel */
 .theme-options {
   position: absolute;
-  top: 70px;
+  top: 60px;
   left: 100px;
   display: flex;
   flex-direction: column;
@@ -68,7 +68,7 @@
   justify-content: flex-start;
   gap: 10px;
   width: 240px;
-  max-height: 400px; /* NEW: restrict panel height */
+  max-height: 350px; /* NEW: restrict panel height */
   overflow-y: auto;  /* NEW: enable scrolling */
   background: var(--nav-option-bg, rgba(255, 255, 255, 0.95));
   border-radius: 12px;
@@ -148,7 +148,7 @@
 
 /* Scrollable Container for Themes ONLY */
 .theme-scroll-container {
-  max-height: 160px; /* Adjust to your liking */
+  max-height: 200px; /* Adjust to your liking */
   overflow-y: auto;
   overflow-x: hidden; /* <== Prevent horizontal scrollbar */
   width: 100%;
