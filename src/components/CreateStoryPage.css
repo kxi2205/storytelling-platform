@@ -1,66 +1,330 @@
+/* General Container and Page Structure */
 .create-story-container {
-  max-width: 600px;
+  max-width: 800px; /* Increased width for richer content */
   margin: 2rem auto;
   padding: 2rem;
-  border: 1px solid #ddd;
+  background-color: #fff;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-.create-story-container h2 {
-  text-align: center;
-  margin-bottom: 1.5rem;
+.create-story-container h2,
+.create-story-container h3,
+.create-story-container h4 {
   color: #333;
-}
-
-.create-story-form .form-group {
   margin-bottom: 1rem;
 }
-
-.create-story-form label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+.create-story-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+.create-story-container h3 {
+  font-size: 1.5rem;
+  border-bottom: 2px solid #007bff; /* Accent for step titles */
+  padding-bottom: 0.5rem;
+  margin-top: 1.5rem; /* Space above step titles */
+}
+.create-story-container h4 {
+  font-size: 1.2rem;
   color: #555;
+  margin-top: 1rem;
 }
 
-.create-story-form input[type="text"],
-.create-story-form textarea {
+/* Common Form Group Styling */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600; /* Slightly bolder */
+  color: #495057;
+}
+
+.form-group input[type="text"],
+.form-group input[type="url"],
+.form-group input[type="file"],
+.form-group textarea,
+.form-group select {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
+  padding: 0.65rem 0.75rem; /* Adjusted padding */
+  border: 1px solid #ced4da;
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 1rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.create-story-form textarea {
+.form-group input[type="text"]:focus,
+.form-group input[type="url"]:focus,
+.form-group input[type="file"]:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-group textarea {
   resize: vertical;
+  min-height: 80px;
 }
 
-.submit-button {
-  display: block;
-  width: 100%;
-  padding: 0.75rem;
+/* Button Styling */
+.button-primary,
+.button-secondary,
+.button-tertiary,
+.button-danger,
+.button-danger-small,
+.button-secondary-small,
+.button-tertiary-small {
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  border: 1px solid transparent;
+  text-decoration: none; /* For any <a> styled as button */
+  display: inline-block; /* Align buttons nicely */
+  margin-right: 0.5rem; /* Space between buttons */
+}
+.button-primary:last-child,
+.button-secondary:last-child, /* etc. */ {
+  margin-right: 0;
+}
+
+
+.button-primary {
   background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  border-color: #007bff;
 }
+.button-primary:hover { background-color: #0056b3; border-color: #0056b3;}
+.button-primary:disabled { background-color: #007bff; opacity: 0.65; cursor: not-allowed; }
 
-.submit-button:hover {
-  background-color: #0056b3;
+.button-secondary {
+  background-color: #6c757d;
+  color: white;
+  border-color: #6c757d;
 }
+.button-secondary:hover { background-color: #545b62; border-color: #545b62;}
+.button-secondary:disabled { background-color: #6c757d; opacity: 0.65; cursor: not-allowed; }
 
+.button-tertiary {
+  background-color: #f8f9fa;
+  color: #212529;
+  border-color: #ced4da;
+}
+.button-tertiary:hover { background-color: #e2e6ea; border-color: #dae0e5;}
+.button-tertiary:disabled { opacity: 0.65; cursor: not-allowed; }
+
+.button-danger { /* For main danger actions if any */
+  background-color: #dc3545;
+  color: white;
+  border-color: #dc3545;
+}
+.button-danger:hover { background-color: #c82333; border-color: #c82333;}
+
+.button-danger-small, .button-secondary-small, .button-tertiary-small {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.8rem;
+}
+.button-danger-small { background-color: #dc3545; color:white; border-color:#dc3545; }
+.button-danger-small:hover { background-color: #c82333; border-color: #bd2130; }
+.button-secondary-small { background-color: #6c757d; color:white; border-color:#6c757d; }
+.button-secondary-small:hover { background-color: #5a6268; border-color: #545b62; }
+.button-tertiary-small { background-color: #f8f9fa; color: #212529; border-color: #ced4da; }
+.button-tertiary-small:hover { background-color: #e2e6ea; }
+
+
+/* Error Message Styling */
 .error-message {
-  color: red;
-  background-color: #ffebee;
-  border: 1px solid red;
-  padding: 0.75rem;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 0.75rem 1.25rem;
   border-radius: 4px;
   margin-bottom: 1rem;
-  text-align: center;
+  text-align: left; /* Changed from center */
+}
+
+/* Navigation Buttons Area */
+.navigation-buttons {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between; /* Pushes Prev and Next/Finish to ends */
+  align-items: center;
+}
+.navigation-buttons button { /* Individual buttons already have margin-right, this is for the container */
+   /* No specific style needed here if buttons handle their own margins */
+}
+
+
+/* Step 1: Cover Page */
+.cover-preview img {
+  max-width: 200px;
+  max-height: 250px; /* Allow a bit more height */
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  object-fit: cover; /* Ensure image covers the area well */
+}
+
+/* Step 2: Characters */
+.character-form-section, .chapter-form-section { /* Combined as they are similar */
+  border: 1px solid #e0e0e0;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 6px;
+  background-color: #fdfdfd;
+}
+
+.character-list-section, .chapter-list-section {
+  margin-top: 1.5rem;
+}
+
+.character-list, .chapter-list {
+  list-style: none;
+  padding: 0;
+}
+
+.character-item, .chapter-item {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  padding: 1rem 1.5rem; /* Increased padding */
+  margin-bottom: 1rem; /* Increased spacing */
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.character-item div:first-child, .chapter-item h5 { /* Content part of the item */
+  flex-grow: 1;
+  margin-right: 1rem; /* Space before action buttons */
+}
+.character-item p, .chapter-item h5 {
+  margin: 0.25rem 0;
+}
+.character-item strong {
+  font-size: 1.1em;
+  color: #007bff;
+}
+.chapter-item h5 {
+  font-size: 1.15em;
+  color: #007bff;
+  margin-bottom: 0.5rem;
+}
+
+/* Step 3: Chapters */
+/* ReactQuill specific adjustments */
+.ql-toolbar.ql-snow { /* Toolbar background */
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-bottom: 0; /* Avoid double border with editor */
+  background-color: #f8f9fa;
+}
+.ql-container.ql-snow { /* Editor container */
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  min-height: 250px; /* Ensure enough space */
+  font-size: 1rem;
+}
+.ql-editor { /* Actual editing area */
+  background-color: #fff;
+  min-height: 250px; /* Match container */
+}
+.ql-editor.ql-blank::before{ /* Placeholder text style */
+  color: #6c757d;
+  font-style: normal;
+}
+
+.chapter-actions button {
+  margin-left: 0.5rem; /* Space between edit, remove, preview buttons */
+}
+.chapter-actions button:first-child {
+  margin-left: 0;
+}
+
+
+/* Preview Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Darker backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's on top */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px; /* More padding */
+  border-radius: 8px; /* More rounded */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px; /* Max width for readability */
+  max-height: 85vh; /* Limit height */
+  display: flex;
+  flex-direction: column; /* Align button at bottom */
+}
+
+.modal-content h3 {
+  margin-top: 0;
+  color: #007bff;
+  font-size: 1.6rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.75rem;
+}
+
+.modal-content .ql-editor { /* Re-use for preview */
+  background-color: #f9f9f9; /* Slight off-white for preview pane */
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 4px;
+  max-height: calc(85vh - 150px); /* Adjust based on padding and button height */
+  overflow-y: auto;
+  margin-bottom: 1rem; /* Space before close button */
+}
+
+.modal-content button.button-primary { /* Ensure close button is styled */
+  align-self: flex-end; /* Position button to the right or center as desired */
+}
+
+/* Responsive adjustments (basic) */
+@media (max-width: 768px) {
+  .create-story-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  .character-item, .chapter-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .character-item div:first-child, .chapter-item h5 {
+    margin-right: 0;
+    margin-bottom: 0.5rem; /* Space before action buttons when stacked */
+  }
+  .chapter-actions, .character-item button { /* Ensure buttons in items stack or wrap nicely */
+    margin-top: 0.5rem;
+  }
+  .navigation-buttons {
+    flex-direction: column;
+  }
+  .navigation-buttons button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .navigation-buttons button:last-child {
+    margin-bottom: 0;
+  }
 }

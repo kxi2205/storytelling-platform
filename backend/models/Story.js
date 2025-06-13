@@ -1,5 +1,17 @@
 const mongoose = require("mongoose");
 
+const CharacterSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  details: { type: String },
+  profilePicUrl: { type: String },
+  category: { type: String, enum: ['lead', 'supporting', 'background'], required: true }
+});
+
+const ChapterSchema = new mongoose.Schema({
+  chapterTitle: { type: String, default: 'Untitled Chapter' },
+  chapterContent: { type: String, default: '' }
+});
+
 const StorySchema = new mongoose.Schema({
   title: {
     type: String,
@@ -16,10 +28,9 @@ const StorySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
-  content: {
-    type: String,
-    default: '',
-  },
+  coverPageUrl: { type: String },
+  characters: [CharacterSchema],
+  chapters: [ChapterSchema],
   isPublic: {
     type: Boolean,
     default: false,
