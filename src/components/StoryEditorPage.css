@@ -1,50 +1,140 @@
-.story-editor-container {
-  max-width: 900px;
+/* StoryEditorPage.css - Viewer Styles */
+.story-viewer-container { /* Renamed from story-editor-container for clarity */
+  max-width: 800px;
   margin: 2rem auto;
   padding: 2rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  color: #333;
-}
-
-.story-editor-container h2 {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #333;
-}
-
-.story-editor-container p {
-  text-align: center;
-  margin-bottom: 1.5rem;
-  font-size: 0.9em;
-  color: #555;
-}
-
-.editor-area {
-  margin-bottom: 1.5rem;
-}
-
-.story-textarea {
-  width: 100%;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1rem;
-  line-height: 1.6;
-  resize: vertical;
   background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
 }
 
-.editor-actions {
-  display: flex;
-  justify-content: flex-end;
+.story-viewer-container .story-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+}
+
+.story-viewer-container .story-author {
+  font-size: 1rem;
+  color: #7f8c8d;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.story-viewer-container .story-author a {
+  color: #3498db;
+  text-decoration: none;
+}
+.story-viewer-container .story-author a:hover {
+  text-decoration: underline;
+}
+
+
+.story-cover-image-wrapper {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.story-cover-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.story-section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+.story-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.story-section h3 { /* For "Characters" and "Chapters" titles */
+  font-size: 1.8rem;
+  color: #34495e;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #3498db;
+}
+
+/* Characters Display */
+.characters-list {
+  list-style: none;
+  padding: 0;
+  display: flex; /* Flexbox for card-like layout */
+  flex-wrap: wrap; /* Allow wrapping */
   gap: 1rem;
 }
 
-.action-button {
+.character-item-display {
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  padding: 1rem;
+  border-radius: 6px;
+  flex-basis: calc(50% - 0.5rem); /* Two columns, accounting for gap */
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.character-item-display strong {
+  font-size: 1.1em;
+  color: #2980b9;
+}
+.character-item-display .category {
+  font-style: italic;
+  color: #888;
+  font-size: 0.9em;
+}
+
+/* Chapters Display */
+.chapter-display {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #fdfdfd;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.chapter-display .chapter-title-display {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #16a085;
+  margin-bottom: 1rem;
+}
+
+/* Styling for content rendered by dangerouslySetInnerHTML with ql-editor class */
+.chapter-content-display.ql-editor {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #34495e;
+  background-color: transparent; /* Ensure it inherits or is explicitly set */
+  padding: 0; /* ql-editor might have its own padding, adjust if needed */
+  border: none; /* Remove Quill border if not desired for display */
+}
+.chapter-content-display.ql-editor p {
+  margin-bottom: 1em;
+}
+.chapter-content-display.ql-editor h1,
+.chapter-content-display.ql-editor h2,
+.chapter-content-display.ql-editor h3 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: bold;
+}
+/* Add more specific ql-editor content styles if needed */
+
+.edit-story-button-wrapper {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ecf0f1;
+}
+
+.edit-story-button {
   padding: 0.75rem 1.5rem;
   background-color: #007bff;
   color: white;
@@ -52,34 +142,38 @@
   border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
+  text-decoration: none;
   transition: background-color 0.3s ease;
 }
-
-.action-button:hover {
+.edit-story-button:hover {
   background-color: #0056b3;
 }
 
-/* Minimal theme adjustments - assuming variables are set on :root */
-.story-editor-container {
-  background-color: var(--bg-color, #f9f9f9);
-  color: var(--text-color, #333);
-  border-color: var(--border-color, #ddd);
+.error-message {
+  color: #c0392b;
+  text-align: center;
+  padding: 1rem;
+  background-color: #fbeae5;
+  border: 1px solid #e74c3c;
+  border-radius: 4px;
 }
 
-.story-editor-container h2,
-.story-editor-container p {
-  color: var(--text-color, #333);
-}
-
-.story-textarea {
-  background-color: var(--input-bg-color, #fff);
-  color: var(--input-text-color, #333);
-  border-color: var(--border-color, #ccc);
-}
-
-.action-button {
-  background-color: var(--primary-color, #007bff);
-}
-.action-button:hover {
-  background-color: var(--primary-hover-color, #0056b3);
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .story-viewer-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  .character-item-display {
+    flex-basis: 100%; /* Full width on smaller screens */
+  }
+  .story-viewer-container .story-title {
+    font-size: 2rem;
+  }
+  .story-section h3 {
+    font-size: 1.5rem;
+  }
+  .chapter-display .chapter-title-display {
+    font-size: 1.5rem;
+  }
 }
