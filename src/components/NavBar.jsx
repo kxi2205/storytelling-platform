@@ -81,20 +81,7 @@ const NavBar = ({ theme, toggleTheme }) => {
         console.log("NavBar main effect: Token payload:", payload, "Expiry:", new Date(expiry));
 
         if (Date.now() >= expiry) {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-        const expiry = payload.exp * 1000;
-        console.log("NavBar main effect: Token payload:", payload, "Expiry:", new Date(expiry));
-
-        if (Date.now() >= expiry) {
-          console.warn("NavBar main effect: Token expired."); // This is the line generating the warning.
-          setTokenExpired(true);
-          setIsLoggedIn(false);
-          localStorage.removeItem("token");
-        } else {
-          console.log("NavBar main effect: Token valid, setting isLoggedIn to true.");
-          setIsLoggedIn(true);
-          fetchUserData(token); // Call fetchUserData if token is valid
-        }
+          console.warn("NavBar main effect: Token expired.");
           setTokenExpired(true);
           setIsLoggedIn(false);
           localStorage.removeItem("token");
