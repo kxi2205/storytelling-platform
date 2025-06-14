@@ -34,19 +34,32 @@ const LoginPage = ({ closeModal, openSignup }) => {
       });
 
       const text = await response.text();
-      const data = text ? JSON.parse(text) : {};
+      console.log("Login response text:", text);
+      let data;
+      try {
+        data = text ? JSON.parse(text) : {};
+        console.log("Parsed login response data:", data);
+      } catch (parseError) {
+        console.error("JSON parsing error:", parseError, "Server response text:", text);
+        setError("Received an invalid response from the server.");
+        return;
+      }
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        // Use data.message if available, otherwise a generic error
+        throw new Error(data.message || "An unexpected error occurred.");
       }
 
       localStorage.setItem("token", data.token);
 
-      login(data.token);    // ← update context
-      closeModal();         // ← close modal
+      login(data.token); // ← update context
+      closeModal(); // ← close modal
       navigate("/dashboard"); // ← navigate to dashboard
     } catch (err) {
-      setError(err.message);
+      console.error("Login attempt failed:", err);
+      // Ensure err.message is a string, otherwise provide a fallback.
+      // This handles cases where err might not be an Error object or message is undefined.
+      setError(err.message || "An unexpected error occurred.");
     }
   };
 
