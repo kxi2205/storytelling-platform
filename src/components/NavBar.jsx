@@ -47,10 +47,10 @@ const NavBar = ({ theme, toggleTheme }) => {
 
       try {
         const response = await fetch("http://localhost:5000/api/auth/profile", {
-          headers: {
-            Authorization: currentToken,
-          },
-        });
+        headers: {
+        Authorization: `Bearer ${currentToken}`, // ✅ FIXED
+        },
+      });
         console.log("NavBar main effect: fetchUserData - response status:", response.status);
         const data = await response.json();
         console.log("Fetched user data from backend:", data); // Existing log
@@ -222,7 +222,7 @@ const NavBar = ({ theme, toggleTheme }) => {
             const response = await fetch("http://localhost:5000/api/auth/profile/picture", {
               method: "PUT",
               headers: {
-                Authorization: token,
+                Authorization: `Bearer ${token}`,
               },
               body: formData,
             });

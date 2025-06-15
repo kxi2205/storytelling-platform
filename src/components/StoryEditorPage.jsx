@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import 'react-quill/dist/quill.snow.css'; // For consistent display of chapter content
 import './StoryEditorPage.css';
 
 const StoryEditorPage = () => {

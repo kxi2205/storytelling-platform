@@ -18,50 +18,64 @@ const LoginPage = ({ closeModal, openSignup }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!formData.username || !formData.password) {
-      setError("All fields are required.");
+  e.preventDefault();
+  setError(""); // Reset error
+
+  if (!formData.username || !formData.password) {
+    setError("All fields are required.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const text = await response.text(); // Always read as text first
+    console.log("RAW response text:", text);
+
+    let data;
+    try {
+      data = text ? JSON.parse(text) : {};
+    } catch (parseError) {
+      console.error("❌ JSON parse failed:", parseError);
+      // If JSON parsing fails, the server likely returned non-JSON data
+      // when an error occurred. Log the raw text for debugging.
+      console.error("Raw response text:", text);
+      setError("Server returned invalid data.");
       return;
     }
 
-    try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const text = await response.text();
-      console.log("Login response text:", text);
-      let data;
-      try {
-        data = text ? JSON.parse(text) : {};
-        console.log("Parsed login response data:", data);
-      } catch (parseError) {
-        console.error("JSON parsing error:", parseError, "Server response text:", text);
-        setError("Received an invalid response from the server.");
-        return;
-      }
-
-      if (!response.ok) {
-        // Use data.message if available, otherwise a generic error
-        throw new Error(data.message || "An unexpected error occurred.");
-      }
-
-      localStorage.setItem("token", data.token);
-
-      login(data.token); // ← update context
-      closeModal(); // ← close modal
-      navigate("/dashboard"); // ← navigate to dashboard
-    } catch (err) {
-      console.error("Login attempt failed:", err);
-      // Ensure err.message is a string, otherwise provide a fallback.
-      // This handles cases where err might not be an Error object or message is undefined.
-      setError(err.message || "An unexpected error occurred.");
+    if (!response.ok) {
+      console.error("❌ Server responded with error status:", response.status);
+      // Log the parsed data (or empty object if parsing failed) in case
+      // it contains useful error information.
+      console.error("Parsed error data:", data);
+      setError(data.message || "Login failed.");
+      return;
     }
-  };
+
+    if (!data.token) {
+      console.error("❌ No token found in response.");
+      setError("Invalid login response from server.");
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+    login(data.token);
+    closeModal();
+    navigate("/dashboard");
+
+  } catch (err) {
+    console.error("❌ Network or code error during login:", err);
+    setError(err.message || "Something went wrong.");
+  }
+};
+
 
   return (
     <div className="modal-overlay">

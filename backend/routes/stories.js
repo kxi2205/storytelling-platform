@@ -67,7 +67,7 @@ router.post("/create", authMiddleware, async (req, res) => {
 });
 
 // Update Story - Step 1: Cover Page & Title
-router.put("/stories/:storyId/step1", authMiddleware, uploadCover.single('coverPage'), async (req, res) => {
+router.put("/:storyId/step1", authMiddleware, uploadCover.single('coverPage'), async (req, res) => {
   const { storyId } = req.params;
   const { title } = req.body;
   const userId = req.user.id;
@@ -159,7 +159,7 @@ router.put("/stories/:storyId/step1", authMiddleware, uploadCover.single('coverP
 });
 
 // Update Story - Step 2: Characters
-router.put("/stories/:storyId/step2", authMiddleware, async (req, res) => {
+router.put("/:storyId/step2", authMiddleware, async (req, res) => {
   const { storyId } = req.params;
   const { characters } = req.body; // Expects an array of character objects
   const userId = req.user.id;
@@ -195,7 +195,7 @@ router.put("/stories/:storyId/step2", authMiddleware, async (req, res) => {
 });
 
 // Update Story - Step 3: Story Content (Chapters)
-router.put("/stories/:storyId/step3", authMiddleware, async (req, res) => {
+router.put("/:storyId/step3", authMiddleware, async (req, res) => {
   const { storyId } = req.params;
   const { chapters } = req.body; // Expects an array of chapter objects
   const userId = req.user.id;
