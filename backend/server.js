@@ -22,6 +22,16 @@ app.use("/api/auth", authRoutes);
 const storiesRouter = require("./routes/stories"); // Import stories router
 app.use("/api/stories", storiesRouter); // Mount stories router
 
+// Add payment endpoint to prevent 500 errors
+app.post("/api/create-payment", (req, res) => {
+  // This is a placeholder endpoint to prevent 500 errors
+  // In a real application, this would integrate with a payment processor like Stripe
+  res.status(501).json({
+    error: "Payment functionality not implemented yet",
+    message: "This endpoint is a placeholder. Payment integration with Stripe or other providers would be implemented here."
+  });
+});
+
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
